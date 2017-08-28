@@ -8,10 +8,4 @@ describe("Grid Reducer", () => {
       grid: []
     });
   });
-
-  it("Should handle RESET_GAME", () => {
-    expect(reducer(undefined, actions.startGame(3, 3, 5))).toEqual({
-      grid: [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    });
-  });
 });
