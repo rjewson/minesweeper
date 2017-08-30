@@ -1,16 +1,16 @@
 import * as grid from "./grid";
 
 test("Initalize grid - width", () => {
-  expect(grid.initGrid(10, 10, 1)).toHaveLength(10);
+  expect(grid.initGrid(10, 10, ()=>1)).toHaveLength(10);
 });
 
 const expected = [[9, 9, 9], [9, 9, 9], [9, 9, 9]];
 
 test("Initalize grid - 2d 3x3 9", () => {
-  expect(grid.initGrid(3, 3, 9)).toEqual(expect.arrayContaining(expected));
+  expect(grid.initGrid(3, 3, ()=>9)).toEqual(expect.arrayContaining(expected));
 });
 
-const testGrid0 = grid.initGrid(5, 5, 0);
+const testGrid0 = grid.initGrid(5, 5, ()=>0);
 test("Get cell 0,0 = 0", () => {
   expect(grid.getCell(testGrid0, 0, 0)).toEqual(0);
 });
@@ -32,15 +32,3 @@ test("Immutability check grid0[1] === grid1[1]", () => {
   expect(testGrid0[1]).toEqual(testGrid1[1]);
 });
 
-const testDiagGrid = grid.initGrid(5, 5, 0);
-grid.setDiag(testDiagGrid, 1);
-const range = n => Array.from(Array(n).keys());
-test("Diagonal Grid", () => {
-  range(4).forEach(i =>
-    expect(grid.getCell(testDiagGrid, i + 1, i)).toEqual(0)
-  );
-  range(5).forEach(i => expect(grid.getCell(testDiagGrid, i, i)).toEqual(1));
-  range(4).forEach(i =>
-    expect(grid.getCell(testDiagGrid, i, i + 1)).toEqual(0)
-  );
-});
