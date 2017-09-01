@@ -31,6 +31,26 @@ const ADJACENT_OFFSETS = [
 export const createEmptyBoard = (width, height) =>
   grid.initGrid(width, height, (x, y) => createCell(x, y));
 
+const randomIntRange = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+//Init random board.  Dont care about immutabilty here...
+export const createRandomBoard = (width, height, mines) => {
+  const board = createEmptyBoard(width, height);
+  while (mines > 0) {
+    const position = [
+      randomIntRange(0, width - 1),
+      randomIntRange(0, height - 1)
+    ];
+    const cell = grid.getCell(board, ...position);
+    if (!cell.mine) {
+      cell.mine = true;
+      mines--;
+    }
+  }
+  return board;
+};
+
 const cellAtCoord = (board, coord) => grid.getCell(board, coord[X], coord[Y]);
 
 // This is the 'game' logic for minesweeper.
@@ -62,7 +82,8 @@ export const revealSquare = (board, x, y) => {
 
     //Sum up the adjacent mines
     const adjacentCount = validAdjacentCells.reduce(
-      (sum, adjacentCellCoords) => (grid.getCell(result, ...adjacentCellCoords).mine ? sum + 1 : sum),
+      (sum, adjacentCellCoords) =>
+        grid.getCell(result, ...adjacentCellCoords).mine ? sum + 1 : sum,
       0
     );
 
@@ -93,13 +114,20 @@ export const revealSquare = (board, x, y) => {
   return result;
 };
 
-export const toggleSquareMArker = (board, x, y) => {
-  const cell = grid.getCell(board, x,y)
-  return grid.setCell(board, x,y, {
+export const toggleSquareMarker = (board, x, y) => {
+  const cell = grid.getCell(board, x, y);
+  return grid.setCell(board, x, y, {
     ...cell,
     marked: !cell.marked
   });
-} 
+};
+
+export const gameStatus = board =>
+  board.reduce(
+    (total, column) =>
+      total + column.reduce((result, cell) => result + cell.visible, 0),
+    0
+  );
 
 export const cellToString = cell => {
   if (cell.mine) return cell.visible ? "M" : "*";
@@ -114,7 +142,7 @@ export const printBoard = board => {
     for (var x = 0; x < width; x++) {
       result += cellToString(grid.getCell(board, x, y));
     }
-    if (y!=width-1) result += "\n";
+    if (y != width - 1) result += "\n";
   }
   return result;
 };
